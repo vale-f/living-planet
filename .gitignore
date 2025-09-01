@@ -1,0 +1,25 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor temporary files
+.vscode/
+*.code-workspace
+
+# Operating system temporary files
+*.tmp
+*.swp
+
+# Cache files
+.cache/
+dist/
+build/
+
+# Personal files
+*.log
+
+# p5.js export files (just in case)
+export-*.zip
+
+# Backup files
+*~
