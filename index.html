@@ -87,6 +87,25 @@
   <!-- Info button + Modal -->
   <button id="info-btn" aria-label="About" title="About" class="info-btn">ℹ</button>
 
+  <select id="corner-dropdown" style="
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 2100;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  ">
+    <option value="Global">Global</option>
+    <option value="Africa">Africa</option>
+    <option value="Asia and the Pacific">Asia and the Pacific</option>
+    <option value="Europe and Central Asia">Europe and Central Asia</option>
+    <option value="Latin America and Caribbean">Latin America and Caribbean</option>
+    <option value="North America">North America</option>
+  </select>
+
   <div id="info-modal" class="info-modal" role="dialog" aria-hidden="true" aria-labelledby="info-title">
     <div class="info-panel" role="document">
       <button id="info-close" class="info-close" aria-label="Close">✕</button>
