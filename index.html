@@ -13,15 +13,69 @@
     #year-label { font-weight:700; min-width:140px; text-align:center; }
     .small { font-size:13px; color:#555; }
     label { user-select:none; display:flex; gap:6px; align-items:center; }
+
+    .info-btn {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: rgb(0, 0, 0);
+      color: white;
+      font-weight:700;
+      font-size:17px;
+      line-height:1;
+      cursor: pointer;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(43,124,255,0.18);
+    }
+
+    .info-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 2500;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .info-panel {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 720px;
+      width: 100%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      padding: 18px 20px 22px 20px;
+      position: relative;
+      color: #111;
+    }
+
+    .info-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .info-body { font-size: 15px; line-height: 1.45; color: #222; }
+    .info-panel h2 { margin: 0 0 8px 0; font-size: 18px; }
+    .info-panel a { color: #2b7cff; text-decoration: none; }
+
   </style>
 </head>
+
 <body>
   
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
-
-  <script src="utilities.js"></script>
-  <script src="sketch.js"></script>
-
   <!-- UI container: labels and interpolation control -->
   <div id="ui" aria-hidden="false">
     <div id="leftPanel" class="panel">
@@ -29,5 +83,29 @@
       <div class="small" id="index-label">Index: —</div>
     </div>
   </div>
+
+  <!-- Info button + Modal -->
+  <button id="info-btn" aria-label="About" title="About" class="info-btn">ℹ</button>
+
+  <div id="info-modal" class="info-modal" role="dialog" aria-hidden="true" aria-labelledby="info-title">
+    <div class="info-panel" role="document">
+      <button id="info-close" class="info-close" aria-label="Close">✕</button>
+      <h2 id="info-title">About this visualization</h2>
+      <div class="info-body">
+        <p>This interactive graphic is based on the Living Planet Index, developed by Zoological Society of London (ZSL) and World Wide Fund for Nature (WWF). It illustrates the average change in population sizes of native animal species over time by resizing animal silhouettes.</p>
+        <ul>
+          <li><strong>Data source:</strong> Living Planet Index (ZSL & WWF, 2024).</li>
+          <li><strong>Interpretation:</strong> Indices are relative (1970 baseline = 1.0) and represent trends, not absolute counts of individual animals.</li>
+        </ul>
+        <p style="font-size:0.9em; color:#555;">For more information, visit:</p>
+        <p style="margin-top:8px;"><a href="https://www.livingplanetindex.org/" target="_blank" rel="noopener">Living Planet Index</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+  <script src="utilities.js"></script>
+  <script src="sketch.js"></script>
+
 </body>
 </html>

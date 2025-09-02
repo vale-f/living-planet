@@ -65,13 +65,47 @@ function setup() {
 
     yearsArr = lpiGlobalTable.getColumn('Year').map(Number);
 
-    // UI references
     slider = createSlider(yearsArr[0], yearsArr[yearsArr.length-1], yearsArr[0], 1);
     slider.parent("ui");
     slider.style("width", "240px");
 
     yearLabelElem = select("#year-label");
     indexLabelElem = select("#index-label");
+
+    const infoBtn = document.getElementById('info-btn');
+    const infoModal = document.getElementById('info-modal');
+    const infoClose = document.getElementById('info-close');
+
+    function openInfoModal() {
+        if (!infoModal) return;
+        infoModal.style.display = 'flex';
+        infoModal.setAttribute('aria-hidden', 'false');
+        // Trap focus (optional): set focus to the close button
+        if (infoClose) infoClose.focus();
+    }
+
+    function closeInfoModal() {
+        if (!infoModal) return;
+        infoModal.style.display = 'none';
+        infoModal.setAttribute('aria-hidden', 'true');
+        if (infoBtn) infoBtn.focus();
+    }
+
+    if (infoBtn) infoBtn.addEventListener('click', openInfoModal);
+    if (infoClose) infoClose.addEventListener('click', closeInfoModal);
+
+    // close when clicking outside panel
+    if (infoModal) {
+        infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) closeInfoModal();
+        });
+    }
+
+    // close on ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeInfoModal();
+    });
+
 }
 
 function draw() {
