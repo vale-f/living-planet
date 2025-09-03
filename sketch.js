@@ -152,6 +152,42 @@ function draw() {
 
     yearLabelElem.html(`<strong>Year</strong>: ${currentYear}`);
     indexLabelElem.html(`Index: ${displayIndex !== null ? displayIndex.toFixed(3) : '—'}`);
+
+    // Try to get DOM elements
+    const infoBtn = document.getElementById('info-btn');
+    const infoModal = document.getElementById('info-modal');
+    const infoClose = document.getElementById('info-close');
+
+    function openInfoModal() {
+        if (!infoModal) return;
+        infoModal.style.display = 'flex';
+        infoModal.setAttribute('aria-hidden', 'false');
+        // Trap focus (optional): set focus to the close button
+        if (infoClose) infoClose.focus();
+    }
+
+    function closeInfoModal() {
+        if (!infoModal) return;
+        infoModal.style.display = 'none';
+        infoModal.setAttribute('aria-hidden', 'true');
+        if (infoBtn) infoBtn.focus();
+    }
+
+    if (infoBtn) infoBtn.addEventListener('click', openInfoModal);
+    if (infoClose) infoClose.addEventListener('click', closeInfoModal);
+
+    // close when clicking outside panel
+    if (infoModal) {
+        infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) closeInfoModal();
+        });
+    }
+
+    // close on ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeInfoModal();
+    });
+
 }
 
 class FloatingAnimal {
