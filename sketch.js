@@ -179,10 +179,10 @@ function setupAnimals(selectionName) {
     "giant_panda":[0.07,0.77,0.2],"komodo_dragon":[0.84,0.86,0.082],"tiger":[0.22,0.15,0.17],
     "eurasian_lynx":[0.21,0.81,0.12],"saiga_antelope":[0.87,0.51,0.14],"white_stork":[0.25,0.51,0.18],
     "andean_condor":[0.69,0.22,0.14],"jaguar":[0.66,0.55,0.15],"scarlet_macaw":[0.1,0.55,0.21],
-    "american_bison":[0.52,0.15,0.18],"bald_eagle":[0.65,0.83,0.14],"grizzly_bear":[0.47,0.82,0.16],
-    "american_alligator":[0.25,0.47,0.11],"hippopotamus":[0.85,0.73,0.135],"mekong_giant_catfish":[0.58,0.25,0.09],
-    "great_white_shark":[0.23,0.18,0.17],"humpback_whale":[0.55,0.83,0.21],"monk_seal":[0.55,0.45,0.07],
-    "african_elephant-terrestrial":[0.8,0.25,0.25],"andean_condor-terrestrial":[0.15,0.32,0.14],"tiger-terrestrial":[0.1,0.82,0.18]
+    "american_bison":[0.52,0.15,0.18],"bald_eagle":[0.62,0.83,0.14],"grizzly_bear":[0.47,0.82,0.16],
+    "american_alligator":[0.25,0.55,0.11],"hippopotamus":[0.82,0.60,0.135],"mekong_giant_catfish":[0.55,0.20,0.09],
+    "great_white_shark":[0.23,0.14,0.17],"humpback_whale":[0.49,0.83,0.22],"monk_seal":[0.43,0.44,0.07],
+    "african_elephant-terrestrial":[0.8,0.215,0.25],"andean_condor-terrestrial":[0.12,0.36,0.14],"tiger-terrestrial":[0.1,0.82,0.18]
   };
 
   for (let key of infoObj.animals) {
