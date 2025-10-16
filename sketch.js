@@ -9,6 +9,7 @@ let currentMode = "Region";
 let slider;
 let yearLabelElem, indexLabelElem;
 let displayIndex = 1.0;
+let initialDefaultYear = null;
 
 const regionInfo = {
   "Global": { csv: "global.csv", animals: [ "african_elephant","giraffe","lion","giant_panda","komodo_dragon","tiger","eurasian_lynx","saiga_antelope","white_stork","andean_condor","jaguar","scarlet_macaw","american_bison","bald_eagle","grizzly_bear" ] },
@@ -77,7 +78,7 @@ function setup() {
   const secondDropdown = document.getElementById('second-dropdown');
   secondDropdown.addEventListener('change', (e) => {
     const sel = e.target.value;
-    changeSelection(sel);
+    changeSelection(sel, true);
   });
 
   const firstDropdown = document.getElementById('first-dropdown');
@@ -89,7 +90,7 @@ function setup() {
     
     const second = document.getElementById('second-dropdown');
     second.value = "Global";
-    changeSelection("Global");
+    changeSelection("Global", false, true);
   });
 
   const infoBtn = document.getElementById('info-btn');
@@ -138,7 +139,7 @@ function populateSecondDropdown(mode) {
   }
 }
 
-function changeSelection(selectionName) {
+function changeSelection(selectionName, preserveYear = true, resetToInitial = false) {
   currentSelection = selectionName;
 
   const infoObj = (currentMode === "Region") ? regionInfo[selectionName] : ecosystemInfo[selectionName];
@@ -147,18 +148,33 @@ function changeSelection(selectionName) {
     return;
   }
 
+  const priorYear = (preserveYear && slider && typeof slider.value === 'function') ? slider.value() : null;
+
   const path = `assets/tables/${infoObj.csv}`;
   lpiTable = loadTable(path, 'csv', 'header', () => {
     setupAnimals(selectionName);
     yearsArr = lpiTable.getColumn('Year').map(Number);
+
+    if (initialDefaultYear === null && yearsArr.length > 0) {
+      initialDefaultYear = yearsArr[0];
+    }
+
     setupSlider();
 
     if (slider) {
-      const selectedYear = slider.value ? slider.value() : yearsArr[0];
-      const closest = yearsArr.reduce((prev, curr) =>
-        Math.abs(curr - selectedYear) < Math.abs(prev - selectedYear) ? curr : prev
-      , yearsArr[0]);
-      slider.value(closest);
+        if (preserveYear && priorYear !== null) {
+        // If the exact prior year exists, keep it; otherwise snap to the closest available year
+          const hasExact = yearsArr.indexOf(priorYear) !== -1;
+          if (hasExact) {
+            slider.value(priorYear);
+          } else {
+            const closest = findClosestYear(yearsArr, priorYear) || yearsArr[0];
+            slider.value(closest);
+          }
+        } else {
+        // reset to the table's first year
+          slider.value(yearsArr[0]);
+        }
     }
   }, (err) => {
     console.error("Failed to load table:", path, err);
