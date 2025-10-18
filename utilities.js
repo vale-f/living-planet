@@ -25,3 +25,15 @@ function drawImageKeepAspect(img, x, y, targetWidth=null, targetHeight=null) {
 
   image(img, x, y, w, h);
 }
+
+// Helper function to find the closest year from a list
+function findClosestYear(years, target) {
+  if (!years || years.length === 0) return null;
+  let closest = years[0];
+  let minDiff = Math.abs(target - closest);
+  for (let y of years) {
+    const d = Math.abs(target - y);
+    if (d < minDiff) { minDiff = d; closest = y; }
+  }
+  return closest;
+}

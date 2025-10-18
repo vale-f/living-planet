@@ -121,21 +121,37 @@ function populateSecondDropdown(mode) {
   const second = document.getElementById('second-dropdown');
   if (!second) return;
   second.innerHTML = "";
-
+  
   if (mode === "Region") {
-    const regions = ["Global","Africa","Asia and the Pacific","Europe and Central Asia","Latin America and Caribbean","North America"];
-    regions.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r; opt.textContent = r;
-      second.appendChild(opt);
-    });
+      const regions = [
+          "Global",
+          "Africa",
+          "Asia and the Pacific",
+          "Europe and Central Asia",
+          "Latin America and Caribbean",
+          "North America"
+      ];
+      
+      regions.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = r;
+          second.appendChild(opt);
+      });
   } else {
-    const ecosystems = ["Global","Freshwater","Marine","Terrestrial"];
-    ecosystems.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r; opt.textContent = r;
-      second.appendChild(opt);
-    });
+      const ecosystems = [
+          "Global",
+          "Freshwater",
+          "Marine",
+          "Terrestrial"
+      ];
+      
+      ecosystems.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = r;
+          second.appendChild(opt);
+      });
   }
 }
 
@@ -148,34 +164,48 @@ function changeSelection(selectionName, preserveYear = true, resetToInitial = fa
     return;
   }
 
+  // capture priorYear now (before we touch the slider)
   const priorYear = (preserveYear && slider && typeof slider.value === 'function') ? slider.value() : null;
 
   const path = `assets/tables/${infoObj.csv}`;
   lpiTable = loadTable(path, 'csv', 'header', () => {
     setupAnimals(selectionName);
-    yearsArr = lpiTable.getColumn('Year').map(Number);
 
+    // normalize and sort yearsArr immediately
+    yearsArr = lpiTable.getColumn('Year').map(Number).filter(n => !isNaN(n));
+    yearsArr.sort((a,b) => a - b);
+    if (yearsArr.length === 0) {
+      console.warn("No years in table", path);
+      return;
+    }
+
+    // remember the very first default year loaded by the app (first table load)
     if (initialDefaultYear === null && yearsArr.length > 0) {
       initialDefaultYear = yearsArr[0];
     }
 
-    setupSlider();
+    // choose the initial value we want the slider to have when it's created
+    let desiredYear = yearsArr[0]; // fallback to table's first year
 
-    if (slider) {
-        if (preserveYear && priorYear !== null) {
-        // If the exact prior year exists, keep it; otherwise snap to the closest available year
-          const hasExact = yearsArr.indexOf(priorYear) !== -1;
-          if (hasExact) {
-            slider.value(priorYear);
-          } else {
-            const closest = findClosestYear(yearsArr, priorYear) || yearsArr[0];
-            slider.value(closest);
-          }
-        } else {
-        // reset to the table's first year
-          slider.value(yearsArr[0]);
-        }
+    if (preserveYear && priorYear !== null) {
+      // prefer exact prior year, otherwise use nearest
+      desiredYear = (yearsArr.indexOf(priorYear) !== -1) ? priorYear : findClosestYear(yearsArr, priorYear) || yearsArr[0];
+    } else if (resetToInitial && initialDefaultYear !== null) {
+      desiredYear = (yearsArr.indexOf(initialDefaultYear) !== -1) ? initialDefaultYear : findClosestYear(yearsArr, initialDefaultYear) || yearsArr[0];
+    } else {
+      desiredYear = yearsArr[0];
     }
+
+    // create the slider already set to the right year — prevents intermediate flash
+    setupSlider(desiredYear);
+
+    // update displayIndex for the newly chosen year right away (avoid a frame with wrong index)
+    const currentYear = slider.value();
+    const row = lpiTable.findRow(String(currentYear), 'Year');
+    displayIndex = row ? Number(row.get('LPI_final')) : null;
+    // labels can be updated immediately (they'll also be updated in draw())
+    yearLabelElem.html(`<strong>Year</strong>: ${currentYear}`);
+    indexLabelElem.html(`Index: ${displayIndex !== null ? displayIndex.toFixed(3) : '—'}`);
   }, (err) => {
     console.error("Failed to load table:", path, err);
   });
@@ -219,10 +249,19 @@ function setupAnimals(selectionName) {
   }
 }
 
-function setupSlider() {
-  yearsArr = lpiTable.getColumn('Year').map(Number);
+function setupSlider(initialValue = null) {
+    yearsArr = lpiTable.getColumn('Year').map(Number).filter(n => !isNaN(n));
+  yearsArr.sort((a,b) => a - b);
+
   if (slider) slider.remove();
-  slider = createSlider(yearsArr[0], yearsArr[yearsArr.length - 1], yearsArr[0], 1);
+
+  const defaultYear = (initialValue !== null) ? initialValue : yearsArr[0];
+
+  const clamped = (defaultYear < yearsArr[0]) ? yearsArr[0]
+                : (defaultYear > yearsArr[yearsArr.length-1]) ? yearsArr[yearsArr.length-1]
+                : defaultYear;
+
+  slider = createSlider(yearsArr[0], yearsArr[yearsArr.length - 1], clamped, 1);
   slider.parent("ui");
   slider.style("width", "240px");
 }
